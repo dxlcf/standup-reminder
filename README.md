@@ -4,7 +4,7 @@
 
 ## 下载
 
-[点击下载 StandUpReminder.exe](dist/StandUpReminder.exe)
+[点击下载 StandUpReminder.exe](https://github.com/dxlcf/standup-reminder/releases/latest/download/StandUpReminder.exe)
 
 下载后双击即可运行，无需安装 .NET 运行时。
 
@@ -46,7 +46,22 @@
 dotnet build -c Release
 ```
 
-## 发布单文件 exe
+## 发布 GitHub Release
+
+本仓库已配置 GitHub Actions。创建并推送 `v*` 版本标签后，会自动构建 Windows x64 单文件 exe，并把 `StandUpReminder.exe` 上传到 GitHub Release。
+
+```powershell
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+发布完成后，下载地址为：
+
+```text
+https://github.com/dxlcf/standup-reminder/releases/latest/download/StandUpReminder.exe
+```
+
+## 手动发布单文件 exe
 
 ```powershell
 dotnet publish -c Release -r win-x64 --self-contained `
@@ -56,10 +71,10 @@ dotnet publish -c Release -r win-x64 --self-contained `
   -p:IncludeNativeLibrariesForSelfExtract=true
 ```
 
-仓库内可直接下载的 exe 位于：
+手动发布产物位于：
 
 ```text
-dist/StandUpReminder.exe
+bin/Release/net8.0-windows/win-x64/publish/StandUpReminder.exe
 ```
 
 说明：WPF 自包含发布在 .NET 8 下不支持 trimming，因此 exe 体积会高于设计文档中的 50MB 目标。

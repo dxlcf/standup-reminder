@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build Windows exe and publish release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish single-file exe
+        run: >
+          dotnet publish -c Release -r win-x64 --self-contained
+          -p:PublishSingleFile=true
+          -p:EnableCompressionInSingleFile=true
+          -p:PublishReadyToRun=false
+          -p:IncludeNativeLibrariesForSelfExtract=true
+
+      - name: Prepare release asset
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          Copy-Item "bin\Release\net8.0-windows\win-x64\publish\StandUpReminder.exe" "release\StandUpReminder.exe" -Force
+
+      - name: Create or update GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $asset = "release\StandUpReminder.exe"
+          $notes = @"
+          Windows x64 单文件版本。
+
+          下载 `StandUpReminder.exe` 后双击即可运行，无需安装 .NET 运行时。
+          "@
+
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $asset --clobber
+          } else {
+            gh release create $tag $asset --title "StandUpReminder $tag" --notes $notes
+          }
