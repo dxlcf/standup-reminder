@@ -1,0 +1,228 @@
+<Window x:Class="StandUpReminder.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:StandUpReminder.Controls"
+        Title="久坐提醒"
+        Icon="Assets/standup-reminder.ico"
+        Height="720"
+        Width="1040"
+        MinHeight="620"
+        MinWidth="920"
+        Background="{StaticResource PageBrush}"
+        Closing="Window_Closing">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="56"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#FBFCF8" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,1,0">
+            <DockPanel>
+                <Image DockPanel.Dock="Top" Source="Assets/standup-reminder.png" Width="34" Height="34" HorizontalAlignment="Center" Margin="0,14,0,28"/>
+                <StackPanel>
+                    <Button x:Name="DashboardNavButton" Content="&#xE80F;" ToolTip="主界面" Style="{StaticResource IconButton}" Click="DashboardNavButton_Click"/>
+                    <Button x:Name="RecordsNavButton" Content="&#xE8A5;" ToolTip="记录" Style="{StaticResource IconButton}" Click="RecordsNavButton_Click"/>
+                    <Button x:Name="SettingsNavButton" Content="&#xE713;" ToolTip="设置" Style="{StaticResource IconButton}" Click="SettingsNavButton_Click"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="34,28">
+            <Grid x:Name="DashboardView">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Border HorizontalAlignment="Left" Background="{StaticResource AccentSoftBrush}" CornerRadius="18" Padding="13,7">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="StatusText" Text="工作中" Margin="8,0,0,0" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock x:Name="PeriodText" Text="下午时段 13:00 - 18:00" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}"/>
+                </Grid>
+
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid Width="220" Height="220">
+                        <controls:RingProgress x:Name="CountdownRing" Progress="0.35"/>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="RingStatusLabel" Text="距离下次提醒" FontSize="13" Foreground="{StaticResource MutedBrush}" TextAlignment="Center"/>
+                            <TextBlock x:Name="RemainingText" Text="42:18" Margin="0,8,0,0" FontSize="36" FontWeight="Bold" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock x:Name="ExpectedText" Text="预计 14:00 提醒" Margin="0,18,0,0" Foreground="{StaticResource MutedBrush}" TextAlignment="Center"/>
+                </StackPanel>
+
+                <UniformGrid Grid.Row="2" Columns="3" Margin="0,0,0,24">
+                    <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="今日得分" Foreground="{StaticResource MutedBrush}"/>
+                            <TextBlock x:Name="TodayScoreText" Text="0" Margin="0,10,0,0" FontSize="30" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Margin="6,0">
+                        <StackPanel>
+                            <TextBlock Text="已提醒" Foreground="{StaticResource MutedBrush}"/>
+                            <TextBlock x:Name="TodayReminderCountText" Text="0" Margin="0,10,0,0" FontSize="30" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Margin="12,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="完成率" Foreground="{StaticResource MutedBrush}"/>
+                            <TextBlock x:Name="TodayCompletionRateText" Text="0%" Margin="0,10,0,0" FontSize="30" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <UniformGrid Grid.Row="3" Columns="2">
+                    <Button Content="立即休息" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" Click="ImmediateRestButton_Click"/>
+                    <Button Content="暂停 30 分钟" Style="{StaticResource SecondaryButton}" Margin="10,0,0,0" Click="PauseButton_Click"/>
+                </UniformGrid>
+            </Grid>
+
+            <Grid x:Name="SettingsView" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,22">
+                    <TextBlock Text="设置" FontSize="28" FontWeight="Bold"/>
+                    <Button Content="测试提醒" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Right" Click="ImmediateRestButton_Click"/>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,18">
+                            <StackPanel>
+                                <TextBlock Text="工作时间段" FontSize="18" FontWeight="SemiBold"/>
+                                <ItemsControl x:Name="WorkPeriodsList" Margin="0,14,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,0,1" Padding="0,10">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="110"/>
+                                                        <ColumnDefinition Width="24"/>
+                                                        <ColumnDefinition Width="110"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="42"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBox Text="{Binding Start, UpdateSourceTrigger=PropertyChanged}" Height="34" VerticalContentAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="-" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}"/>
+                                                    <TextBox Grid.Column="2" Text="{Binding End, UpdateSourceTrigger=PropertyChanged}" Height="34" VerticalContentAlignment="Center"/>
+                                                    <TextBox Grid.Column="3" Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" Height="34" Margin="12,0" VerticalContentAlignment="Center"/>
+                                                    <Button Grid.Column="4" Content="&#xE711;" FontFamily="Segoe MDL2 Assets" ToolTip="删除" Style="{StaticResource IconButton}" Tag="{Binding}" Click="DeletePeriodButton_Click"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Button Content="+ 添加时间段" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left" Margin="0,16,0,0" Click="AddPeriodButton_Click"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="提醒规则" FontSize="18" FontWeight="SemiBold"/>
+                                <Grid Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="170"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="48"/>
+                                        <RowDefinition Height="48"/>
+                                        <RowDefinition Height="48"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="提醒间隔" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="IntervalTextBox" Grid.Column="1" Height="34" VerticalContentAlignment="Center"/>
+                                    <TextBlock Grid.Row="1" Text="休息时长" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="BreakTextBox" Grid.Row="1" Grid.Column="1" Height="34" VerticalContentAlignment="Center"/>
+                                    <TextBlock Grid.Row="2" Text="延后时间" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DeferComboBox" Grid.Row="2" Grid.Column="1" Height="34" VerticalContentAlignment="Center">
+                                        <ComboBoxItem Content="5"/>
+                                        <ComboBoxItem Content="10"/>
+                                        <ComboBoxItem Content="15"/>
+                                    </ComboBox>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}" Margin="0,18,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="开机自启" FontSize="18" FontWeight="SemiBold"/>
+                                    <TextBlock Text="登录 Windows 后自动运行久坐提醒" Margin="0,8,0,0" Foreground="{StaticResource MutedBrush}"/>
+                                </StackPanel>
+                                <CheckBox x:Name="AutoStartCheckBox" Grid.Column="1" VerticalAlignment="Center" IsChecked="True"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Grid Grid.Row="2" Margin="0,20,0,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Button Content="恢复默认" Style="{StaticResource SecondaryButton}" Margin="0,0,10,0" Click="ResetDefaultsButton_Click"/>
+                        <Button Content="清空数据" Style="{StaticResource SecondaryButton}" Click="ClearDataButton_Click"/>
+                    </StackPanel>
+                    <Button Content="保存设置" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" Click="SaveSettingsButton_Click"/>
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="RecordsView" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,22">
+                    <TextBlock Text="休息记录" FontSize="28" FontWeight="Bold"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="&#xE72B;" FontFamily="Segoe MDL2 Assets" ToolTip="前一天" Style="{StaticResource IconButton}" Click="PreviousDateButton_Click"/>
+                        <TextBlock x:Name="RecordDateText" Text="2026-06-18 今天" VerticalAlignment="Center" Margin="10,0" FontWeight="SemiBold"/>
+                        <Button Content="&#xE72A;" FontFamily="Segoe MDL2 Assets" ToolTip="后一天" Style="{StaticResource IconButton}" Click="NextDateButton_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,20">
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,0">
+                        <StackPanel><TextBlock Text="今日总分" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="RecordScoreText" Text="0" FontSize="26" FontWeight="Bold"/></StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Margin="4,0,6,0">
+                        <StackPanel><TextBlock Text="提醒次数" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="RecordCountText" Text="0" FontSize="26" FontWeight="Bold"/></StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Margin="6,0,4,0">
+                        <StackPanel><TextBlock Text="完成次数" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="RecordCompletedText" Text="0" FontSize="26" FontWeight="Bold"/></StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Margin="10,0,0,0">
+                        <StackPanel><TextBlock Text="延后次数" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="RecordDeferredText" Text="0" FontSize="26" FontWeight="Bold"/></StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <Border Grid.Row="2" Style="{StaticResource Card}" Padding="0">
+                    <DataGrid x:Name="RecordsGrid" AutoGenerateColumns="False" HeadersVisibility="Column" GridLinesVisibility="None" CanUserAddRows="False" IsReadOnly="True" BorderThickness="0" RowHeight="42">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="计划" Binding="{Binding OriginalDueTime}" Width="*"/>
+                            <DataGridTextColumn Header="实际" Binding="{Binding ActualPopupTime}" Width="*"/>
+                            <DataGridTextColumn Header="时长" Binding="{Binding Duration}" Width="*"/>
+                            <DataGridTextColumn Header="状态" Binding="{Binding StatusText}" Width="*"/>
+                            <DataGridTextColumn Header="延后" Binding="{Binding DeferredText}" Width="*"/>
+                            <DataGridTextColumn Header="得分" Binding="{Binding Score}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

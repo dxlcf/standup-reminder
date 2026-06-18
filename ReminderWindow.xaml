@@ -1,0 +1,37 @@
+<Window x:Class="StandUpReminder.ReminderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="休息提醒"
+        Icon="Assets/standup-reminder.ico"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True"
+        Topmost="True"
+        Background="#F7FAF2"
+        KeyDown="Window_KeyDown">
+    <Border Background="#F7FAF2" BorderBrush="#C9D6BF" BorderThickness="1" Padding="34">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="560">
+                <TextBlock Text="该起来活动一下了" FontSize="34" FontWeight="Bold" Foreground="#172016" TextAlignment="Center"/>
+                <TextBlock x:Name="EncourageText" Text="建议站起来、喝水、伸展或远眺" Margin="0,14,0,0" FontSize="17" Foreground="#657260" TextAlignment="Center"/>
+
+                <Border Width="210" Height="112" Margin="0,34,0,0" Background="#FFFFFF" BorderBrush="#DCE2D4" BorderThickness="1" CornerRadius="8">
+                    <TextBlock x:Name="CountdownText" Text="05:00" FontSize="48" FontWeight="SemiBold" Foreground="#2E7D32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+                <TextBlock x:Name="ScoreHintText" Text="完成休息可获得 100 分" Margin="0,24,0,0" FontSize="16" Foreground="#43513F" TextAlignment="Center"/>
+
+                <UniformGrid x:Name="ActionButtonsGrid" Columns="2" Margin="0,36,0,0">
+                    <Button x:Name="DeferButton" Content="延后提醒" Style="{StaticResource SecondaryButton}" Margin="8,0" Click="DeferButton_Click"/>
+                    <Button x:Name="FinishButton" Content="结束休息" Style="{StaticResource PrimaryButton}" Margin="8,0" Click="FinishButton_Click"/>
+                </UniformGrid>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
